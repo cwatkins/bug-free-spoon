@@ -32,13 +32,18 @@ app.get("/config", async (_, res) => {
   return res.send({ locationId, applicationId })
 })
 
+BigInt.prototype.toJSON = function () {
+  return this.toString()
+}
+
 // Create a payment using a token
 app.post("/payment", async (req, res) => {
   try {
+    const idempotencyKey = nanoid()
     // Get our card token and create a request
     const { token, verificationToken } = req.body
     const { result } = await square.paymentsApi.createPayment({
-      idempotencyKey: nanoid(),
+      idempotencyKey,
       sourceId: token,
       amountMoney: {
         amount: calculateCartTotal(), // from cart (backend)
@@ -49,9 +54,7 @@ app.post("/payment", async (req, res) => {
     // Get payment result and send info to consumer
     const { payment } = result
     return res.send({
-      status: payment.status,
-      receiptUrl: payment.receiptUrl,
-      orderId: payment.orderId,
+      payment,
     })
   } catch (e) {
     // Check if this is an Square API Error
@@ -66,8 +69,8 @@ app.post("/payment", async (req, res) => {
         },
       })
     }
-    // If it's not a Square Error, send server error
-    return res.status(500).send({
+    // If it's not a Square Error, send a generic 400
+    return res.status(400).send({
       error: {
         message: "Something went wrong: " + e.message,
       },

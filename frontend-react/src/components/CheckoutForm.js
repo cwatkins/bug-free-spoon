@@ -1,12 +1,18 @@
 import { useEffect, useState } from "react"
 import { useLogs } from "../hooks/LogState"
-import { CreditCard, PaymentForm } from "react-square-web-payments-sdk"
+import {
+  CashAppPay,
+  CreditCard,
+  PaymentForm
+} from "react-square-web-payments-sdk"
 import { useNavigate } from "react-router-dom"
+import { attemptPayment } from "../api/PaymentAPI"
 
-export const CheckoutForm = () => {
-  const { logs, setLogs } = useLogs()
+export const CheckoutForm = ({ total }) => {
   const [applicationId, setApplicationId] = useState()
   const [locationId, setLocationId] = useState()
+  const { logs, setLogs } = useLogs()
+
   const navigate = useNavigate()
 
   useEffect(() => {
@@ -26,37 +32,71 @@ export const CheckoutForm = () => {
           <PaymentForm
             applicationId={applicationId}
             locationId={locationId}
+            createPaymentRequest={() => ({
+              countryCode: "US",
+              currencyCode: "USD",
+              total: {
+                amount: `${(total / 100).toFixed(2)}`,
+                label: "Total"
+              }
+            })}
             cardTokenizeResponseReceived={async (
               tokenResult,
               verificationResult
             ) => {
-              // Pass tokent to backend for payment
-              const response = await fetch("/payment", {
-                method: "POST",
-                headers: {
-                  "Content-Type": "application/json"
-                },
-                body: JSON.stringify({
-                  token: tokenResult.token,
-                  verificationToken: verificationResult.token
-                })
+              // Pass token to backend for payment
+              const { error, payment } = await attemptPayment({
+                tokenResult,
+                verificationResult
               })
-              const result = await response.json()
-              // Set logs
-              const log = `result:\n${JSON.stringify(result, null, 2)}`
+              // Handle error
+              if (error) {
+                const log = `result:\n${JSON.stringify(error, null, 2)}`
+                setLogs([...logs, log])
+                return
+              }
+
+              const log = `payment:\n${JSON.stringify(payment, null, 2)}`
               setLogs([...logs, log])
               // Go to thank you page, if payment goes through
-              if (result.status === "COMPLETED") {
+              if (payment.status === "COMPLETED") {
                 navigate("/thank-you")
               }
             }}
             createVerificationDetails={() => ({
-              amount: "9.21",
+              amount: `${(total / 100).toFixed(2)}`,
               currencyCode: "USD",
               intent: "CHARGE",
               billingContact: {}
             })}
           >
+            <div className="py-2">
+              <CashAppPay
+                width="full"
+                callbacks={{
+                  onTokenization: async (event) => {
+                    const { tokenResult } = event.detail
+                    const { error, payment } = await attemptPayment({
+                      tokenResult
+                    })
+                    // Handle error
+                    if (error) {
+                      const log = `result:\n${JSON.stringify(error, null, 2)}`
+                      setLogs([...logs, log])
+                      return
+                    }
+                    // Set logs
+                    const log = `payment:\n${JSON.stringify(payment, null, 2)}`
+                    setLogs([...logs, log])
+                    // Go to thank you page, if payment goes through
+                    if (payment.status === "COMPLETED") {
+                      navigate("/thank-you")
+                      window.location.reload(false) // force Cashapp to destroy itself
+                    }
+                  }
+                }}
+              />
+            </div>
             <CreditCard />
           </PaymentForm>
         </div>
