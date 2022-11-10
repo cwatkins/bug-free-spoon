@@ -1,0 +1,28 @@
+{
+  "name": "stripe-terminal-backend",
+  "version": "0.0.0",
+  "description": "Square example app",
+  "main": "index.js",
+  "author": "charlesw_dev",
+  "license": "MIT",
+  "type": "module",
+  "private": true,
+  "scripts": {
+    "dev": "nodemon index.js",
+    "start": "export NODE_ENV=production && node index.js",
+    "test": "echo \"Error: there are no tests!\" && exit 1"
+  },
+  "dependencies": {
+    "body-parser": "^1.20.1",
+    "dotenv": "^16.0.3",
+    "express": "^4.18.1",
+    "nanoid": "^4.0.0",
+    "square": "^23.0.0"
+  },
+  "devDependencies": {
+    "eslint": "^8.26.0",
+    "eslint-config-prettier": "^8.5.0",
+    "nodemon": "^2.0.20",
+    "prettier": "^2.7.1"
+  }
+}
