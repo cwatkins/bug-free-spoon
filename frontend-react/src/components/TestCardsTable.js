@@ -13,30 +13,28 @@ export const TestCardsTable = () => {
       cvv: "111",
       challengeType: "Modal",
       verificationCode: "123456"
-    },
-    {
-      brand: "Visa",
-      cardNumber: "4811 1100 0000 0008",
-      cvv: "111",
-      challengeType: "None",
-      verificationCode: "N/A"
-    },
-    {
-      brand: "Mastercard",
-      cardNumber: "5333 3300 0000 0008",
-      cvv: "111",
-      challengeType: "Modal",
-      verificationCode:
-        "Challenge 1: Thomason \nChallenge 2: Select both St Louis & Dallas \nChallenge 3: Smith"
     }
+    // {
+    //   brand: "Visa",
+    //   cardNumber: "4811 1100 0000 0008",
+    //   cvv: "111",
+    //   challengeType: "None",
+    //   verificationCode: "N/A"
+    // },
+    // {
+    //   brand: "Mastercard",
+    //   cardNumber: "5333 3300 0000 0008",
+    //   cvv: "111",
+    //   challengeType: "Modal",
+    //   verificationCode:
+    //     "Challenge 1: Thomason \nChallenge 2: Select both St Louis & Dallas \nChallenge 3: Smith"
+    // }
   ]
 
   return (
-    <div className="pt-6">
-      <h2 className="text-xl font-bold">Test cards</h2>
-      <hr />
-      <br />
-      <table className="pt-2 w-full text-lg text-left table-auto border border-spacing-2">
+    <div className="pt-6 text-neutral-500">
+      <h2 className="text-md font-semibold text-neutral-700">Test cards</h2>
+      <table className="pt-2 w-full text-sm text-left table-auto border border-spacing-2">
         <thead>
           <tr>
             <th className="font-medium border p-1">Numbers</th>

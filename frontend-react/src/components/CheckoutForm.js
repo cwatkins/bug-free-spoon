@@ -1,9 +1,13 @@
 import { useEffect, useState } from "react"
+import { useLogs } from "../hooks/LogState"
 import { CreditCard, PaymentForm } from "react-square-web-payments-sdk"
+import { useNavigate } from "react-router-dom"
 
-export const CheckoutForm = ({ setLogs, logs }) => {
+export const CheckoutForm = () => {
+  const { logs, setLogs } = useLogs()
   const [applicationId, setApplicationId] = useState()
   const [locationId, setLocationId] = useState()
+  const navigate = useNavigate()
 
   useEffect(() => {
     const retrieveSquareConfig = async () => {
@@ -26,6 +30,7 @@ export const CheckoutForm = ({ setLogs, logs }) => {
               tokenResult,
               verificationResult
             ) => {
+              // Pass tokent to backend for payment
               const response = await fetch("/payment", {
                 method: "POST",
                 headers: {
@@ -37,14 +42,17 @@ export const CheckoutForm = ({ setLogs, logs }) => {
                 })
               })
               const result = await response.json()
-              if (logs && setLogs) {
-                const log = `result:\n${JSON.stringify(result, null, 2)}`
-                setLogs([...logs, log])
+              // Set logs
+              const log = `result:\n${JSON.stringify(result, null, 2)}`
+              setLogs([...logs, log])
+              // Go to thank you page, if payment goes through
+              if (result.status === "COMPLETED") {
+                navigate("/thank-you")
               }
             }}
             createVerificationDetails={() => ({
-              amount: "0.00",
-              currencyCode: "GBP",
+              amount: "9.21",
+              currencyCode: "USD",
               intent: "CHARGE",
               billingContact: {}
             })}
