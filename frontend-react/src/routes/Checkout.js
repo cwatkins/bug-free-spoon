@@ -18,22 +18,24 @@ const total = product.price + tax + tip
 export const Checkout = () => {
   return (
     <div className="flex flex-col h-full justify-between">
-      <h1 className="text-2xl font-black">Your order - Block Coffee</h1>
-      <hr />
-      <ProductCard
-        title={product.title}
-        description={product.description}
-        quantity={product.quantity}
-        price={product.price}
-        image={product.image}
-      />
-      <hr />
-      <CheckoutSummary
-        price={product.price}
-        tax={tax}
-        tip={tip}
-        total={total}
-      />
+      <div className="justify-between">
+        <h1 className="text-2xl font-black">Your order - Block Coffee</h1>
+        <hr />
+        <ProductCard
+          title={product.title}
+          description={product.description}
+          quantity={product.quantity}
+          price={product.price}
+          image={product.image}
+        />
+        <hr />
+        <CheckoutSummary
+          price={product.price}
+          tax={tax}
+          tip={tip}
+          total={total}
+        />
+      </div>
       <br />
       <CheckoutForm total={total} />
     </div>
