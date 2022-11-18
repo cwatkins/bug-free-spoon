@@ -61,6 +61,7 @@ export const CheckoutForm = ({ total }) => {
               // Go to thank you page, if payment goes through
               if (payment.status === "COMPLETED") {
                 navigate("/thank-you")
+                window.location.reload(false) // forces Cashapp to unmount and remount on navigation
               }
             }}
             createVerificationDetails={() => ({
@@ -91,7 +92,7 @@ export const CheckoutForm = ({ total }) => {
                     // Go to thank you page, if payment goes through
                     if (payment.status === "COMPLETED") {
                       navigate("/thank-you")
-                      window.location.reload(false) // force Cashapp to destroy itself
+                      window.location.reload(false) // forces Cashapp to unmount and remount on navigation
                     }
                   }
                 }}
